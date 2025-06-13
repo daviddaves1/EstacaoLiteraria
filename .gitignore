@@ -1,0 +1,17 @@
+# Arquivos compilados
+*.class
+
+# Executáveis (ignora tudo, exceto o jar final de entrega)
+*.jar
+!EstacaoLiteraria.jar
+
+# Arquivos de dados locais
+/data/
+
+# Configurações de IDEs (não versionar arquivos de configurações locais)
+.idea/
+.vscode/
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
