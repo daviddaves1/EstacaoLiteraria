@@ -7,13 +7,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Responsável pela interação com o usuário através de caixas de diálogo (JOptionPane).
+ * Esta classe atua como a camada de apresentação, solicitando entradas e exibindo informações,
+ * e orquestra as operações chamando os métodos da classe {@link Sistema}.
+ */
 public class Interface {
     private Sistema sistema;
 
+    /**
+     * Construtor da classe Interface.
+     * @param sistema A instância da classe {@link Sistema} que gerencia a lógica de negócio e os dados.
+     */
     public Interface(Sistema sistema) {
         this.sistema = sistema;
     }
 
+    /**
+     * Inicia o loop principal da aplicação, exibindo o menu de opções para o usuário.
+     * O programa continua a exibir o menu e processar as opções até que o usuário escolha sair.
+     */
     public void iniciarAplicacao() {
         int opcao;
         do {
@@ -29,14 +42,14 @@ public class Interface {
 
             String input = JOptionPane.showInputDialog(null, menu, "Menu Principal", JOptionPane.PLAIN_MESSAGE);
 
-            if (input == null) {
-                opcao = 0;
+            if (input == null) { // Trata o clique no botão 'Cancelar' ou fechamento da janela.
+                opcao = 0; // Interpreta como intenção de sair.
             } else {
                 try {
-                    opcao = Integer.parseInt(input);
+                    opcao = Integer.parseInt(input); // Converte a entrada do usuário para um número inteiro.
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(null, "Opção inválida. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
-                    opcao = -1;
+                    opcao = -1; // Define uma opção inválida para continuar o loop.
                 }
             }
 
@@ -48,11 +61,11 @@ public class Interface {
                 case 5: gerenciarCategorias(); break;
                 case 6: visualizarCatalogoCompleto(); break;
                 case 0:
-                    sistema.salvarTodosDados();
+                    sistema.salvarTodosDados(); // Salva todos os dados antes de encerrar a aplicação.
                     JOptionPane.showMessageDialog(null, "Saindo da aplicação. Dados salvos!", "Adeus!", JOptionPane.INFORMATION_MESSAGE);
                     break;
                 default:
-                    if (opcao != -1) {
+                    if (opcao != -1) { // Evita exibir mensagem de erro duplicada se já tratada pelo NumberFormatException.
                         JOptionPane.showMessageDialog(null, "Opção inválida. Tente novamente.", "Erro", JOptionPane.ERROR_MESSAGE);
                     }
                     break;
@@ -60,7 +73,10 @@ public class Interface {
         } while (opcao != 0);
     }
 
-    //Métodos de Gerenciamento de Livros
+    /**
+     * Exibe o menu de opções para gerenciamento de Livros (cadastro, edição, exclusão, visualização, busca).
+     * Permite ao usuário navegar e realizar operações específicas de livros.
+     */
     private void gerenciarLivros() {
         int opcao;
         do {
@@ -73,7 +89,7 @@ public class Interface {
                           "0. Voltar ao Menu Principal\n\n" +
                           "Escolha uma opção:";
             String input = JOptionPane.showInputDialog(null, menu, "Gerenciar Livros", JOptionPane.PLAIN_MESSAGE);
-            if (input == null) { opcao = 0; } else { try { opcao = Integer.parseInt(input); } catch (NumberFormatException e) { JOptionPane.showMessageDialog(null, "Entrada inválida.", "Erro", JOptionPane.ERROR_MESSAGE); opcao = -1; }}
+            if (input == null) { opcao = 0; } else { try { opcao = Integer.parseInt(input); } catch (NumberFormatException e) { JOptionPane.showMessageDialog(null, "Entrada inválida. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE); opcao = -1; }}
 
             switch (opcao) {
                 case 1: cadastrarLivro(); break;
@@ -81,15 +97,21 @@ public class Interface {
                 case 3: excluirLivro(); break;
                 case 4: visualizarLivros(); break;
                 case 5: buscarLivro(); break;
-                case 0: break;
+                case 0: break; // Retorna ao menu principal.
                 default: JOptionPane.showMessageDialog(null, "Opção inválida.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         } while (opcao != 0);
     }
 
+    /**
+     * Solicita os dados para o cadastro de um novo livro ao usuário
+     * e chama o método correspondente na classe {@link Sistema}.
+     * Realiza validações de formato de entrada e trata exceções de duplicidade.
+     */
     private void cadastrarLivro() {
         String titulo = JOptionPane.showInputDialog("Título do Livro:");
-        if (titulo == null) return;
+        if (titulo == null) return; // Usuário cancelou.
+
         float preco;
         int estoque;
         int paginas;
@@ -102,23 +124,23 @@ public class Interface {
             return;
         }
         String isbn = JOptionPane.showInputDialog("ISBN:");
-        if (isbn == null) return;
+        if (isbn == null) return; // Usuário cancelou.
 
-        Editora editoraSelecionada = selecionarEditora();
+        Editora editoraSelecionada = selecionarEditora(); // Permite ao usuário selecionar uma editora existente.
         if (editoraSelecionada == null) {
-            JOptionPane.showMessageDialog(null, "Cadastro de Livro cancelado. Editora não selecionada.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Cadastro de Livro cancelado. Editora não selecionada ou não cadastrada.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        List<Autor> autoresSelecionados = selecionarMultiplosAutores();
+        List<Autor> autoresSelecionados = selecionarMultiplosAutores(); // Permite ao usuário selecionar múltiplos autores existentes.
         if (autoresSelecionados.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Livro deve ter pelo menos um autor. Cadastro cancelado.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        Categoria categoriaSelecionada = selecionarCategoria();
+        Categoria categoriaSelecionada = selecionarCategoria(); // Permite ao usuário selecionar uma categoria existente.
         if (categoriaSelecionada == null) {
-            JOptionPane.showMessageDialog(null, "Cadastro de Livro cancelado. Categoria não selecionada.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Cadastro de Livro cancelado. Categoria não selecionada ou não cadastrada.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -133,6 +155,11 @@ public class Interface {
         }
     }
 
+    /**
+     * Solicita o ID de um livro a ser editado, coleta os novos dados do usuário
+     * e chama o método de edição na classe {@link Sistema}.
+     * Inclui validação de entrada, pré-preenchimento de campos e tratamento de exceções.
+     */
     private void editarLivro() {
         String idStr = JOptionPane.showInputDialog("Digite o ID do livro a ser editado:");
         if (idStr == null) return;
@@ -144,6 +171,7 @@ public class Interface {
                 return;
             }
 
+            // Solicita novos dados, exibindo os valores atuais como sugestão.
             String novoTitulo = JOptionPane.showInputDialog("Novo Título (" + livro.getTitulo() + "):", livro.getTitulo());
             if (novoTitulo == null) return;
             float novoPreco;
@@ -160,21 +188,21 @@ public class Interface {
             String novoIsbn = JOptionPane.showInputDialog("Novo ISBN (" + livro.getIsbn() + "):", livro.getIsbn());
             if (novoIsbn == null) return;
 
-            Editora novaEditora = selecionarEditora(livro.getEditora());
+            Editora novaEditora = selecionarEditora(livro.getEditora()); // Pré-seleciona a editora atual.
             if (novaEditora == null) {
-                 JOptionPane.showMessageDialog(null, "Edição de Livro cancelada. Editora não selecionada.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                 JOptionPane.showMessageDialog(null, "Edição de Livro cancelada. Editora não selecionada ou não cadastrada.", "Aviso", JOptionPane.WARNING_MESSAGE);
                  return;
             }
 
-            List<Autor> novosAutores = selecionarMultiplosAutores(livro.getAutores());
+            List<Autor> novosAutores = selecionarMultiplosAutores(livro.getAutores()); // Pré-seleciona os autores atuais.
             if (novosAutores.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Livro deve ter pelo menos um autor. Edição cancelada.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            Categoria novaCategoria = selecionarCategoria(livro.getCategoria());
+            Categoria novaCategoria = selecionarCategoria(livro.getCategoria()); // Pré-seleciona a categoria atual.
             if (novaCategoria == null) {
-                JOptionPane.showMessageDialog(null, "Edição de Livro cancelada. Categoria não selecionada.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Edição de Livro cancelada. Categoria não selecionada ou não cadastrada.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -189,10 +217,14 @@ public class Interface {
             }
 
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "ID inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "ID inválido. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    /**
+     * Solicita o ID de um livro a ser excluído ao usuário
+     * e chama o método de exclusão na classe {@link Sistema}.
+     */
     private void excluirLivro() {
         String idStr = JOptionPane.showInputDialog("Digite o ID do livro a ser excluído:");
         if (idStr == null) return;
@@ -204,10 +236,13 @@ public class Interface {
                 JOptionPane.showMessageDialog(null, "Livro não encontrado ou falha ao excluir.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "ID inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "ID inválido. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    /**
+     * Exibe uma lista formatada de todos os livros atualmente cadastrados no sistema.
+     */
     private void visualizarLivros() {
         List<Livro> livros = sistema.getTodosLivros();
         if (livros.isEmpty()) {
@@ -221,6 +256,10 @@ public class Interface {
         JOptionPane.showMessageDialog(null, sb.toString(), "Visualizar Livros", JOptionPane.PLAIN_MESSAGE);
     }
 
+    /**
+     * Permite ao usuário buscar livros por diferentes critérios (título, autor ou categoria)
+     * e exibe os resultados da busca.
+     */
     private void buscarLivro() {
         String tipoBusca = JOptionPane.showInputDialog("Buscar Livro por:\n1. Título\n2. Autor\n3. Categoria\n0. Voltar");
         if (tipoBusca == null) return;
@@ -228,23 +267,32 @@ public class Interface {
         List<Livro> resultados = new ArrayList<>();
         try {
             int opcao = Integer.parseInt(tipoBusca);
+            if (opcao == 0) return; // Voltar.
+
             String termo = JOptionPane.showInputDialog("Digite o termo de busca:");
-            if (termo == null || termo.trim().isEmpty()) return;
+            if (termo == null || termo.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Termo de busca não pode ser vazio.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
             switch (opcao) {
                 case 1: resultados = sistema.buscarLivrosPorTitulo(termo); break;
                 case 2: resultados = sistema.buscarLivrosPorAutor(termo); break;
                 case 3: resultados = sistema.buscarLivrosPorCategoria(termo); break;
-                case 0: return;
                 default: JOptionPane.showMessageDialog(null, "Opção de busca inválida.", "Erro", JOptionPane.ERROR_MESSAGE); return;
             }
-            exibirResultadosBuscaLivro(resultados, termo);
+            exibirResultsadosBuscaLivro(resultados, termo);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Opção inválida. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void exibirResultadosBuscaLivro(List<Livro> resultados, String termo) {
+    /**
+     * Exibe os resultados de uma busca por livros em uma caixa de diálogo.
+     * @param resultados A lista de objetos {@link Livro} encontrados pela busca.
+     * @param termo O termo de busca utilizado.
+     */
+    private void exibirResultsadosBuscaLivro(List<Livro> resultados, String termo) {
         if (resultados.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Nenhum livro encontrado para o termo: '" + termo + "'", "Resultado da Busca", JOptionPane.INFORMATION_MESSAGE);
         } else {
@@ -256,7 +304,10 @@ public class Interface {
         }
     }
 
-    //Métodos de Gerenciamento de Jornais
+    /**
+     * Exibe o menu de opções para gerenciamento de Jornais (cadastro, edição, exclusão, visualização, busca).
+     * Permite ao usuário navegar e realizar operações específicas de jornais.
+     */
     private void gerenciarJornais() {
         int opcao;
         do {
@@ -283,6 +334,11 @@ public class Interface {
         } while (opcao != 0);
     }
 
+    /**
+     * Solicita os dados para o cadastro de um novo jornal ao usuário
+     * e chama o método correspondente na classe {@link Sistema}.
+     * Realiza validações de formato de entrada e trata exceções de duplicidade.
+     */
     private void cadastrarJornal() {
         String titulo = JOptionPane.showInputDialog("Título do Jornal:");
         if (titulo == null) return;
@@ -298,17 +354,17 @@ public class Interface {
 
         Editora editoraSelecionada = selecionarEditora();
         if (editoraSelecionada == null) {
-            JOptionPane.showMessageDialog(null, "Cadastro de Jornal cancelado. Editora não selecionada.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Cadastro de Jornal cancelado. Editora não selecionada ou não cadastrada.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         LocalDate dataPublicacao = null;
-        String dataStr = JOptionPane.showInputDialog("Data de Publicação (AAAA-MM-DD):");
+        String dataStr = JOptionPane.showInputDialog("Data de Publicação (DD/MM/AAAA):");
         if (dataStr == null) return;
         try {
-            dataPublicacao = LocalDate.parse(dataStr);
+            dataPublicacao = LocalDate.parse(dataStr, Util.DATE_FORMATTER);
         } catch (DateTimeParseException e) {
-            JOptionPane.showMessageDialog(null, "Formato de data inválido. Use AAAA-MM-DD.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Formato de data inválido. Use DD/MM/AAAA.", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -323,6 +379,11 @@ public class Interface {
         }
     }
 
+    /**
+     * Solicita o ID de um jornal a ser editado, coleta os novos dados do usuário
+     * e chama o método de edição na classe {@link Sistema}.
+     * Inclui validação de entrada, pré-preenchimento de campos e tratamento de exceções.
+     */
     private void editarJornal() {
         String idStr = JOptionPane.showInputDialog("Digite o ID do jornal a ser editado:");
         if (idStr == null) return;
@@ -348,17 +409,20 @@ public class Interface {
 
             Editora novaEditora = selecionarEditora(jornal.getEditora());
             if (novaEditora == null) {
-                 JOptionPane.showMessageDialog(null, "Edição de Jornal cancelada. Editora não selecionada.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                 JOptionPane.showMessageDialog(null, "Edição de Jornal cancelada. Editora não selecionada ou não cadastrada.", "Aviso", JOptionPane.WARNING_MESSAGE);
                  return;
             }
 
             LocalDate novaDataPublicacao = null;
-            String dataStr = JOptionPane.showInputDialog("Nova Data de Publicação (AAAA-MM-DD) (" + jornal.getDataPublicacao() + "):", jornal.getDataPublicacao().toString());
+            String dataStr = JOptionPane.showInputDialog(
+                "Nova Data de Publicação (DD/MM/AAAA) (" + jornal.getDataPublicacao().format(Util.DATE_FORMATTER) + "):",
+                jornal.getDataPublicacao().format(Util.DATE_FORMATTER)
+            );
             if (dataStr == null) return;
             try {
-                novaDataPublicacao = LocalDate.parse(dataStr);
+                novaDataPublicacao = LocalDate.parse(dataStr, Util.DATE_FORMATTER);
             } catch (DateTimeParseException e) {
-                JOptionPane.showMessageDialog(null, "Formato de data inválido. Use AAAA-MM-DD.", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Formato de data inválido. Use DD/MM/AAAA.", "Erro", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -373,10 +437,14 @@ public class Interface {
             }
 
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "ID inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "ID inválido. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    /**
+     * Solicita o ID de um jornal a ser excluído ao usuário
+     * e chama o método de exclusão na classe {@link Sistema}.
+     */
     private void excluirJornal() {
         String idStr = JOptionPane.showInputDialog("Digite o ID do jornal a ser excluído:");
         if (idStr == null) return;
@@ -388,10 +456,13 @@ public class Interface {
                 JOptionPane.showMessageDialog(null, "Jornal não encontrado ou falha ao excluir.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "ID inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "ID inválido. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    /**
+     * Exibe uma lista formatada de todos os jornais atualmente cadastrados no sistema.
+     */
     private void visualizarJornais() {
         List<Jornal> jornais = sistema.getTodosJornais();
         if (jornais.isEmpty()) {
@@ -405,6 +476,10 @@ public class Interface {
         JOptionPane.showMessageDialog(null, sb.toString(), "Visualizar Jornais", JOptionPane.PLAIN_MESSAGE);
     }
 
+    /**
+     * Permite ao usuário buscar jornais por diferentes critérios (título ou data de publicação)
+     * e exibe os resultados da busca.
+     */
     private void buscarJornal() {
         String tipoBusca = JOptionPane.showInputDialog("Buscar Jornal por:\n1. Título\n2. Data de Publicação\n0. Voltar");
         if (tipoBusca == null) return;
@@ -412,30 +487,39 @@ public class Interface {
         List<Jornal> resultados = new ArrayList<>();
         try {
             int opcao = Integer.parseInt(tipoBusca);
+            if (opcao == 0) return; // Voltar.
+
             String termo = JOptionPane.showInputDialog("Digite o termo de busca:");
-            if (termo == null || termo.trim().isEmpty()) return;
+            if (termo == null || termo.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Termo de busca não pode ser vazio.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
             switch (opcao) {
                 case 1: resultados = sistema.buscarJornaisPorTitulo(termo); break;
                 case 2:
                     try {
-                        LocalDate data = LocalDate.parse(termo);
+                        LocalDate data = LocalDate.parse(termo, Util.DATE_FORMATTER);
                         resultados = sistema.buscarJornaisPorData(data);
                     } catch (DateTimeParseException e) {
-                        JOptionPane.showMessageDialog(null, "Formato de data inválido. Use AAAA-MM-DD.", "Erro", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Formato de data inválido. Use DD/MM/AAAA.", "Erro", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     break;
-                case 0: return;
                 default: JOptionPane.showMessageDialog(null, "Opção de busca inválida.", "Erro", JOptionPane.ERROR_MESSAGE); return;
             }
-            exibirResultadosBuscaJornal(resultados, termo);
+            exibirResultsadosBuscaJornal(resultados, termo);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Opção inválida. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void exibirResultadosBuscaJornal(List<Jornal> resultados, String termo) {
+    /**
+     * Exibe os resultados de uma busca por jornais em uma caixa de diálogo.
+     * @param resultados A lista de objetos {@link Jornal} encontrados pela busca.
+     * @param termo O termo de busca utilizado.
+     */
+    private void exibirResultsadosBuscaJornal(List<Jornal> resultados, String termo) {
         if (resultados.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Nenhum jornal encontrado para o termo: '" + termo + "'", "Resultado da Busca", JOptionPane.INFORMATION_MESSAGE);
         } else {
@@ -447,7 +531,10 @@ public class Interface {
         }
     }
 
-    //Métodos de Gerenciamento de Autores
+    /**
+     * Exibe o menu de opções para gerenciamento de Autores (cadastro e visualização).
+     * Permite ao usuário navegar e realizar operações específicas de autores.
+     */
     private void gerenciarAutores() {
         int opcao;
         do {
@@ -468,18 +555,23 @@ public class Interface {
         } while (opcao != 0);
     }
 
+    /**
+     * Solicita os dados para o cadastro de um novo autor ao usuário
+     * e chama o método correspondente na classe {@link Sistema}.
+     * Realiza validações de formato de entrada e trata exceções de duplicidade.
+     */
     private void cadastrarAutor() {
         String nome = JOptionPane.showInputDialog("Nome do Autor:");
         if (nome == null) return;
         String nacionalidade = JOptionPane.showInputDialog("Nacionalidade:");
         if (nacionalidade == null) return;
         LocalDate dataNascimento = null;
-        String dataStr = JOptionPane.showInputDialog("Data de Nascimento (AAAA-MM-DD):");
+        String dataStr = JOptionPane.showInputDialog("Data de Nascimento (DD/MM/AAAA):");
         if (dataStr == null) return;
         try {
-            dataNascimento = LocalDate.parse(dataStr);
+            dataNascimento = LocalDate.parse(dataStr, Util.DATE_FORMATTER);
         } catch (DateTimeParseException e) {
-            JOptionPane.showMessageDialog(null, "Formato de data inválido. Use AAAA-MM-DD.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Formato de data inválido. Use DD/MM/AAAA.", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -494,6 +586,9 @@ public class Interface {
         }
     }
 
+    /**
+     * Exibe uma lista formatada de todos os autores atualmente cadastrados no sistema.
+     */
     private void visualizarAutores() {
         List<Autor> autores = sistema.getTodosAutores();
         if (autores.isEmpty()) {
@@ -507,7 +602,10 @@ public class Interface {
         JOptionPane.showMessageDialog(null, sb.toString(), "Visualizar Autores", JOptionPane.PLAIN_MESSAGE);
     }
 
-    //Métodos de Gerenciamento de Editoras
+    /**
+     * Exibe o menu de opções para gerenciamento de Editoras (cadastro e visualização).
+     * Permite ao usuário navegar e realizar operações específicas de editoras.
+     */
     private void gerenciarEditoras() {
         int opcao;
         do {
@@ -528,6 +626,11 @@ public class Interface {
         } while (opcao != 0);
     }
 
+    /**
+     * Solicita o nome para o cadastro de uma nova editora ao usuário
+     * e chama o método correspondente na classe {@link Sistema}.
+     * Trata exceções de duplicidade.
+     */
     private void cadastrarEditora() {
         String nome = JOptionPane.showInputDialog("Nome da Editora:");
         if (nome == null) return;
@@ -543,6 +646,9 @@ public class Interface {
         }
     }
 
+    /**
+     * Exibe uma lista formatada de todas as editoras atualmente cadastradas no sistema.
+     */
     private void visualizarEditoras() {
         List<Editora> editoras = sistema.getTodasEditoras();
         if (editoras.isEmpty()) {
@@ -556,7 +662,10 @@ public class Interface {
         JOptionPane.showMessageDialog(null, sb.toString(), "Visualizar Editoras", JOptionPane.PLAIN_MESSAGE);
     }
 
-    //Métodos de Gerenciamento de Categorias
+    /**
+     * Exibe o menu de opções para gerenciamento de Categorias (cadastro e visualização).
+     * Permite ao usuário navegar e realizar operações específicas de categorias.
+     */
     private void gerenciarCategorias() {
         int opcao;
         do {
@@ -577,6 +686,11 @@ public class Interface {
         } while (opcao != 0);
     }
 
+    /**
+     * Solicita o nome para o cadastro de uma nova categoria ao usuário
+     * e chama o método correspondente na classe {@link Sistema}.
+     * Trata exceções de duplicidade.
+     */
     private void cadastrarCategoria() {
         String nome = JOptionPane.showInputDialog("Nome da Categoria:");
         if (nome == null) return;
@@ -592,6 +706,9 @@ public class Interface {
         }
     }
 
+    /**
+     * Exibe uma lista formatada de todas as categorias atualmente cadastrados no sistema.
+     */
     private void visualizarCategorias() {
         List<Categoria> categorias = sistema.getTodasCategorias();
         if (categorias.isEmpty()) {
@@ -605,11 +722,23 @@ public class Interface {
         JOptionPane.showMessageDialog(null, sb.toString(), "Visualizar Categorias", JOptionPane.PLAIN_MESSAGE);
     }
 
-    //Seletores para associação (Auxiliares da Interface)
+    /**
+     * Permite ao usuário selecionar uma {@link Editora} de uma lista de editoras disponíveis.
+     * Este método sobrecarregado não oferece uma editora pré-selecionada.
+     * @return A {@link Editora} selecionada pelo usuário, ou {@code null} se o usuário cancelar
+     * ou se não houver editoras cadastradas.
+     */
     private Editora selecionarEditora() {
         return selecionarEditora(null);
     }
 
+    /**
+     * Permite ao usuário selecionar uma {@link Editora} de uma lista de editoras disponíveis.
+     * Permite pré-selecionar uma editora existente para edição.
+     * @param editoraAtual A {@link Editora} atualmente associada, para ser pré-selecionada (pode ser {@code null}).
+     * @return A {@link Editora} selecionada pelo usuário, ou {@code null} se o usuário cancelar
+     * ou se não houver editoras cadastradas.
+     */
     private Editora selecionarEditora(Editora editoraAtual) {
         List<Editora> editorasDisponiveis = sistema.getTodasEditoras();
         if (editorasDisponiveis.isEmpty()) {
@@ -617,23 +746,37 @@ public class Interface {
             return null;
         }
 
+        // Converte a lista de editoras para um array de Object para que o JOptionPane possa exibir as opções.
         Object[] opcoes = editorasDisponiveis.toArray();
         Editora selecionada = (Editora) JOptionPane.showInputDialog(
             null,
             "Selecione a Editora:",
             "Seleção de Editora",
             JOptionPane.QUESTION_MESSAGE,
-            null,
+            null, // Ícone padrão.
             opcoes,
-            editoraAtual != null ? editoraAtual : opcoes[0]
+            editoraAtual != null ? editoraAtual : opcoes[0] // Pré-seleciona a editora atual ou a primeira da lista.
         );
         return selecionada;
     }
 
+    /**
+     * Permite ao usuário selecionar uma {@link Categoria} de uma lista de categorias disponíveis.
+     * Este método sobrecarregado não oferece uma categoria pré-selecionada.
+     * @return A {@link Categoria} selecionada pelo usuário, ou {@code null} se o usuário cancelar
+     * ou se não houver categorias cadastradas.
+     */
     private Categoria selecionarCategoria() {
         return selecionarCategoria(null);
     }
 
+    /**
+     * Permite ao usuário selecionar uma {@link Categoria} de uma lista de categorias disponíveis.
+     * Permite pré-selecionar uma categoria existente para edição.
+     * @param categoriaAtual A {@link Categoria} atualmente associada, para ser pré-selecionada (pode ser {@code null}).
+     * @return A {@link Categoria} selecionada pelo usuário, ou {@code null} se o usuário cancelar
+     * ou se não houver categorias cadastradas.
+     */
     private Categoria selecionarCategoria(Categoria categoriaAtual) {
         List<Categoria> categoriasDisponiveis = sistema.getTodasCategorias();
         if (categoriasDisponiveis.isEmpty()) {
@@ -654,10 +797,23 @@ public class Interface {
         return selecionada;
     }
 
+    /**
+     * Permite ao usuário selecionar múltiplos {@link Autor}es de uma lista de autores disponíveis.
+     * Este método sobrecarregado não oferece autores pré-selecionados.
+     * @return Uma lista de objetos {@link Autor} selecionados. Retorna uma lista vazia se nenhum for selecionado
+     * ou se não houver autores cadastrados.
+     */
     private List<Autor> selecionarMultiplosAutores() {
         return selecionarMultiplosAutores(new ArrayList<>());
     }
 
+    /**
+     * Permite ao usuário selecionar múltiplos {@link Autor}es de uma lista de autores disponíveis.
+     * Oferece a opção de pré-selecionar autores já associados, útil durante a edição.
+     * @param autoresAtuais Uma lista de objetos {@link Autor} atualmente associados, para pré-seleção.
+     * @return Uma lista de objetos {@link Autor} selecionados. Retorna uma lista vazia se nenhum for selecionado
+     * ou se não houver autores cadastrados.
+     */
     private List<Autor> selecionarMultiplosAutores(List<Autor> autoresAtuais) {
         List<Autor> autoresDisponiveis = sistema.getTodosAutores();
         if (autoresDisponiveis.isEmpty()) {
@@ -665,13 +821,16 @@ public class Interface {
             return new ArrayList<>();
         }
 
+        // Cria um array de nomes dos autores para exibição na JList.
         String[] opcoesNomes = autoresDisponiveis.stream()
                                             .map(Autor::getNome)
                                             .toArray(String[]::new);
 
+        // Cria a JList que permite seleção múltipla.
         javax.swing.JList<String> list = new javax.swing.JList<>(opcoesNomes);
         list.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
+        // Pré-seleciona os autores que já estão na lista de 'autoresAtuais'.
         List<Integer> indicesSelecionados = new ArrayList<>();
         for (Autor autorAtual : autoresAtuais) {
             for (int i = 0; i < autoresDisponiveis.size(); i++) {
@@ -684,8 +843,10 @@ public class Interface {
         int[] selectedIndices = indicesSelecionados.stream().mapToInt(Integer::intValue).toArray();
         list.setSelectedIndices(selectedIndices);
 
+        // Exibe a JList dentro de um JOptionPane para que o usuário faça a seleção.
         JOptionPane.showMessageDialog(null, new javax.swing.JScrollPane(list), "Selecione um ou mais Autores:", JOptionPane.PLAIN_MESSAGE);
 
+        // Coleta os objetos Autor correspondentes aos índices selecionados pelo usuário.
         List<Autor> selecionados = new ArrayList<>();
         if (list.getSelectedIndices().length > 0) {
             for (int index : list.getSelectedIndices()) {
@@ -695,6 +856,10 @@ public class Interface {
         return selecionados;
     }
 
+    /**
+     * Exibe o catálogo completo de todas as publicações (livros e jornais)
+     * cadastradas no sistema em uma única caixa de diálogo.
+     */
     private void visualizarCatalogoCompleto() {
         StringBuilder sb = new StringBuilder("--- CATÁLOGO COMPLETO ---\n\n");
         sb.append("--- LIVROS ---\n\n");
