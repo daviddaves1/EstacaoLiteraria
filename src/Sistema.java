@@ -197,11 +197,14 @@ public class Sistema {
         if (estoque < 0) {
             throw new DuplicidadeException("Estoque do livro não pode ser negativo.");
         }
-        if (paginas < 10) { // Assumindo pelo menos 10 páginas para um "livro"
+        if (paginas < 10) {
             throw new DuplicidadeException("Quantidade de páginas do livro deve ser no mínimo 10.");
         }
         if (isbn == null || isbn.trim().isEmpty()) {
             throw new DuplicidadeException("ISBN do livro não pode ser vazio.");
+        }
+        if (isbn.trim().startsWith("-")) {
+            throw new DuplicidadeException("ISBN do livro não pode ser negativo.");
         }
         if (existeLivroComTitulo(titulo)) {
             throw new DuplicidadeException("Livro com o título '" + titulo + "' já existe.");
@@ -347,7 +350,10 @@ public class Sistema {
                 throw new DuplicidadeException("Quantidade de páginas do livro deve ser no mínimo 10.");
             }
             if (novoIsbn == null || novoIsbn.trim().isEmpty()) {
-                throw new DuplicidadeException("ISBN do livro não pode ser vazio.");
+            throw new DuplicidadeException("ISBN do livro não pode ser vazio.");
+            }
+            if (novoIsbn.trim().startsWith("-")) {
+                throw new DuplicidadeException("ISBN do livro não pode ser negativo.");
             }
             if (existeLivroComTituloEIsbnExcluindoId(novoTitulo, novoIsbn, livro.getId())) {
                 throw new DuplicidadeException("O título ou ISBN '" + novoTitulo + "' / '" + novoIsbn + "' já pertence a outro livro.");
