@@ -89,7 +89,17 @@ Este tutorial te guiará para executar a "Estação Literária" no Windows ou Li
     * A interface gráfica (`JOptionPane`) aparecerá para você interagir.
 
 * **Geração de Documentação (Javadoc):**
-    * No terminal (dentro de `EstacaoLiteraria/`), execute:
+    * No terminal (dentro de `EstacaoLiteraria/`), execute o comando apropriado para o seu sistema:
+
+    * **Windows (PowerShell):**
+        ```powershell
+        javadoc -d docs/javadoc -encoding UTF-8 -sourcepath src (Get-ChildItem -Path src -Recurse -Include *.java | Select-Object -ExpandProperty FullName)
+        ```
+    * **Windows (Prompt de Comando):**
+        ```cmd
+        FOR /R src %f IN (*.java) DO @javadoc -d docs/javadoc -encoding UTF-8 -sourcepath src "%f"
+        ```
+    * **Linux:**
         ```bash
         javadoc -d docs/javadoc -encoding UTF-8 -sourcepath src src/*.java
         ```
