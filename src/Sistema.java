@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
 /**
  * Classe principal do sistema de gerenciamento da Estação Literária.
@@ -25,6 +26,8 @@ public class Sistema {
     private final String ARQUIVO_AUTORES = "autores.dat";
     private final String ARQUIVO_EDITORAS = "editoras.dat";
     private final String ARQUIVO_CATEGORIAS = "categorias.dat";
+
+    private static final Pattern ISBN_PATTERN = Pattern.compile("^\\d{3}-\\d{2}-\\d{3}-\\d{4}-\\d{1}$");
 
     /**
      * Construtor da classe Sistema.
@@ -203,6 +206,9 @@ public class Sistema {
         if (isbn == null || isbn.trim().isEmpty()) {
             throw new DuplicidadeException("ISBN do livro não pode ser vazio.");
         }
+        if (!ISBN_PATTERN.matcher(isbn.trim()).matches()) {
+            throw new DuplicidadeException("Formato de ISBN inválido. Use o padrão XXX-XX-XXX-XXXX-X.");
+        }
         if (existeLivroComTitulo(titulo)) {
             throw new DuplicidadeException("Livro com o título '" + titulo + "' já existe.");
         }
@@ -348,6 +354,9 @@ public class Sistema {
             }
             if (novoIsbn == null || novoIsbn.trim().isEmpty()) {
             throw new DuplicidadeException("ISBN do livro não pode ser vazio.");
+            }
+            if (!ISBN_PATTERN.matcher(novoIsbn.trim()).matches()) {
+                throw new DuplicidadeException("Formato de ISBN inválido. Use o padrão XXX-XX-XXX-XXXX-X.");
             }
             if (existeLivroComTituloEIsbnExcluindoId(novoTitulo, novoIsbn, livro.getId())) {
                 throw new DuplicidadeException("O título ou ISBN '" + novoTitulo + "' / '" + novoIsbn + "' já pertence a outro livro.");
