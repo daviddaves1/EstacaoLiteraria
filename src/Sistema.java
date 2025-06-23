@@ -207,7 +207,7 @@ public class Sistema {
             throw new DuplicidadeException("ISBN do livro não pode ser vazio.");
         }
         if (!ISBN_PATTERN.matcher(isbn.trim()).matches()) {
-            throw new DuplicidadeException("Formato de ISBN inválido. Use o padrão XXX-XX-XXX-XXXX-X.");
+            throw new DuplicidadeException("Formato de ISBN inválido. Use um formato como: 123-45-678-9123-4");
         }
         if (existeLivroComTitulo(titulo)) {
             throw new DuplicidadeException("Livro com o título '" + titulo + "' já existe.");
@@ -356,7 +356,7 @@ public class Sistema {
             throw new DuplicidadeException("ISBN do livro não pode ser vazio.");
             }
             if (!ISBN_PATTERN.matcher(novoIsbn.trim()).matches()) {
-                throw new DuplicidadeException("Formato de ISBN inválido. Use o padrão XXX-XX-XXX-XXXX-X.");
+                throw new DuplicidadeException("Formato de ISBN inválido. Use um formato como: 123-45-678-9123-4");
             }
             if (existeLivroComTituloEIsbnExcluindoId(novoTitulo, novoIsbn, livro.getId())) {
                 throw new DuplicidadeException("O título ou ISBN '" + novoTitulo + "' / '" + novoIsbn + "' já pertence a outro livro.");

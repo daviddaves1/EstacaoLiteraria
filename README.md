@@ -40,7 +40,7 @@ Este tutorial te guiará para executar a "Estação Literária" no Windows ou Li
 
 ### 2. Preparar Pastas e Compilar 🛠️
 
-1.  **Limpar e Criar `bin/` (para compilados):**
+* **Limpar e Criar `bin/` (para compilados):**
     * No terminal (dentro de `EstacaoLiteraria/`):
         * Windows (PowerShell):
             ```powershell
@@ -57,13 +57,13 @@ Este tutorial te guiará para executar a "Estação Literária" no Windows ou Li
             rm -rf bin
             mkdir bin
             ```
-2.  **Criar `data/` (para persistência):**
+* **Criar `data/` (para persistência):**
     * No terminal (dentro de `EstacaoLiteraria/`):
         * Windows / Linux:
             ```bash
             mkdir data
             ```
-3.  **Compilar o Código Fonte:**
+* **Compilar o Código Fonte:**
     * Compile no terminal (dentro de `EstacaoLiteraria/`):
         * Windows / Linux:
             ```bash
@@ -77,14 +77,23 @@ Este tutorial te guiará para executar a "Estação Literária" no Windows ou Li
         ```bash
         jar cfe EstacaoLiteraria.jar src.Main -C bin .
         ```
-### 4. Rodar a Aplicação! 🎉
 
-* No terminal (dentro de `EstacaoLiteraria/`):
-    * Windows / Linux:
+### 4. Rodar a Aplicação e Gerar Artefatos Finais! 🎉
+
+* **Rodar a Aplicação:**
+    * No terminal (dentro de `EstacaoLiteraria/`):
+        * Windows / Linux:
+            ```bash
+            java -jar EstacaoLiteraria.jar
+            ```
+    * A interface gráfica (`JOptionPane`) aparecerá para você interagir.
+
+* **Geração de Documentação (Javadoc):**
+    * No terminal (dentro de `EstacaoLiteraria/`), execute:
         ```bash
-        java -jar EstacaoLiteraria.jar
+        javadoc -d docs/javadoc -encoding UTF-8 -sourcepath src src/*.java
         ```
-* A interface gráfica (`JOptionPane`) aparecerá para você interagir.
+    * A documentação HTML será criada em `docs/javadoc/`. Você pode abri-la acessando `docs/javadoc/index.html` em seu navegador.
 
 ---
 
@@ -98,11 +107,3 @@ A aplicação permite ao administrador gerenciar o estoque da livraria com:
 * **Busca:** Pesquise Livros (título, autor, categoria) e Jornais (título, data).
 * **Persistência:** Dados salvos e carregados automaticamente em arquivos locais.
 * **Tratamento de Exceções:** Alertas em caso de dados repetidos.
-
----
-
-## Documentação do Javadoc 📖
-
-Para mais detalhes sobre o Javadoc:
-
-* **Javadoc (Documentação da API):** Abra `EstacaoLiteraria\docs\javadoc\index.html` em seu navegador.
