@@ -120,7 +120,7 @@ public class Interface {
             estoque = Integer.parseInt(JOptionPane.showInputDialog("Estoque Inicial:"));
             paginas = Integer.parseInt(JOptionPane.showInputDialog("Quantidade de Páginas:"));
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Entrada numérica inválida para preço, estoque ou páginas.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Entrada inválida. Certifique-se de usar valores válidos para preço, estoque e páginas.", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
         String isbn = JOptionPane.showInputDialog("ISBN:");
@@ -182,7 +182,7 @@ public class Interface {
                 novoEstoque = Integer.parseInt(JOptionPane.showInputDialog("Novo Estoque (" + livro.getEstoqueDisponivel() + "):", String.valueOf(livro.getEstoqueDisponivel())));
                 novaPaginas = Integer.parseInt(JOptionPane.showInputDialog("Nova Quantidade de Páginas (" + livro.getQuantidadePaginas() + "):", String.valueOf(livro.getQuantidadePaginas())));
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Entrada numérica inválida para preço, estoque ou páginas.", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Entrada inválida. Certifique-se de usar valores válidos para preço, estoque e páginas.", "Erro", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             String novoIsbn = JOptionPane.showInputDialog("Novo ISBN (" + livro.getIsbn() + "):", livro.getIsbn());
@@ -347,10 +347,10 @@ public class Interface {
         try {
             preco = Float.parseFloat(JOptionPane.showInputDialog("Preço do Jornal:"));
             estoque = Integer.parseInt(JOptionPane.showInputDialog("Estoque Inicial:"));
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Entrada numérica inválida para preço ou estoque.", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+            } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Entrada inválida. Certifique-se de usar valores válidos para preço e estoque.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
         Editora editoraSelecionada = selecionarEditora();
         if (editoraSelecionada == null) {
@@ -436,9 +436,10 @@ public class Interface {
                 JOptionPane.showMessageDialog(null, e.getMessage(), "Erro de Edição", JOptionPane.ERROR_MESSAGE);
             }
 
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "ID inválido. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
-        }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Entrada inválida. Certifique-se de usar valores válidos para preço e estoque.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
     }
 
     /**

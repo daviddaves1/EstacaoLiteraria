@@ -191,6 +191,18 @@ public class Sistema {
      * @throws DuplicidadeException Se já existir um livro com o mesmo título ou ISBN.
      */
     public boolean cadastrarLivro(String titulo, float preco, int estoque, Editora editora, int paginas, String isbn, List<Autor> autoresAssociar, Categoria categoriaAssociar) {
+        if (preco < 15.00) {
+            throw new DuplicidadeException("Preço do livro deve ser no mínimo R$ 15,00.");
+        }
+        if (estoque < 0) {
+            throw new DuplicidadeException("Estoque do livro não pode ser negativo.");
+        }
+        if (paginas < 10) { // Assumindo pelo menos 10 páginas para um "livro"
+            throw new DuplicidadeException("Quantidade de páginas do livro deve ser no mínimo 10.");
+        }
+        if (isbn == null || isbn.trim().isEmpty()) {
+            throw new DuplicidadeException("ISBN do livro não pode ser vazio.");
+        }
         if (existeLivroComTitulo(titulo)) {
             throw new DuplicidadeException("Livro com o título '" + titulo + "' já existe.");
         }
@@ -223,6 +235,18 @@ public class Sistema {
      * @throws DuplicidadeException Se já existir um jornal com o mesmo título e data de publicação.
      */
     public boolean cadastrarJornal(String titulo, float preco, int estoque, Editora editora, LocalDate dataPublicacao) {
+        if (preco < 3.00) {
+            throw new DuplicidadeException("Preço do jornal deve ser no mínimo R$ 3,00.");
+        }
+        if (estoque < 0) {
+            throw new DuplicidadeException("Estoque do jornal não pode ser negativo.");
+        }
+        if (preco <= 0) {
+            throw new DuplicidadeException("Preço do jornal deve ser maior que zero.");
+        }
+        if (estoque < 0) {
+            throw new DuplicidadeException("Estoque do jornal não pode ser negativo.");
+        }
         if (existeJornalComTituloEData(titulo, dataPublicacao)) {
             throw new DuplicidadeException("Jornal com o título '" + titulo + "' e data '" + dataPublicacao + "' já existe.");
         }
@@ -313,6 +337,18 @@ public class Sistema {
     public boolean editarLivro(int idLivro, String novoTitulo, float novoPreco, int novoEstoque, Editora novaEditora, int novaPaginas, String novoIsbn, List<Autor> novosAutores, Categoria novaCategoria) {
         Livro livro = buscarLivroPorId(idLivro);
         if (livro != null) {
+            if (novoPreco < 15.00) {
+            throw new DuplicidadeException("Preço do livro deve ser no mínimo R$ 15,00.");
+            }
+            if (novoEstoque < 0) {
+                throw new DuplicidadeException("Estoque do livro não pode ser negativo.");
+            }
+            if (novaPaginas < 10) {
+                throw new DuplicidadeException("Quantidade de páginas do livro deve ser no mínimo 10.");
+            }
+            if (novoIsbn == null || novoIsbn.trim().isEmpty()) {
+                throw new DuplicidadeException("ISBN do livro não pode ser vazio.");
+            }
             if (existeLivroComTituloEIsbnExcluindoId(novoTitulo, novoIsbn, livro.getId())) {
                 throw new DuplicidadeException("O título ou ISBN '" + novoTitulo + "' / '" + novoIsbn + "' já pertence a outro livro.");
             }
@@ -352,7 +388,13 @@ public class Sistema {
      */
     public boolean editarJornal(int idJornal, String novoTitulo, float novoPreco, int novoEstoque, Editora novaEditora, LocalDate novaDataPublicacao) {
         Jornal jornal = buscarJornalPorId(idJornal);
-        if (jornal != null) {
+            if (jornal != null) {
+                if (novoPreco < 3.00) {
+                throw new DuplicidadeException("Preço do jornal deve ser no mínimo R$ 3,00.");
+            }
+            if (novoEstoque < 0) {
+                throw new DuplicidadeException("Estoque do jornal não pode ser negativo.");
+            }
             if (existeJornalComTituloEDataExcluindoId(novoTitulo, novaDataPublicacao, jornal.getId())) {
                 throw new DuplicidadeException("Jornal com o título '" + novoTitulo + "' e data '" + novaDataPublicacao + "' já existe.");
             }
