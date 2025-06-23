@@ -203,9 +203,6 @@ public class Sistema {
         if (isbn == null || isbn.trim().isEmpty()) {
             throw new DuplicidadeException("ISBN do livro não pode ser vazio.");
         }
-        if (isbn.trim().startsWith("-")) {
-            throw new DuplicidadeException("ISBN do livro não pode ser negativo.");
-        }
         if (existeLivroComTitulo(titulo)) {
             throw new DuplicidadeException("Livro com o título '" + titulo + "' já existe.");
         }
@@ -351,9 +348,6 @@ public class Sistema {
             }
             if (novoIsbn == null || novoIsbn.trim().isEmpty()) {
             throw new DuplicidadeException("ISBN do livro não pode ser vazio.");
-            }
-            if (novoIsbn.trim().startsWith("-")) {
-                throw new DuplicidadeException("ISBN do livro não pode ser negativo.");
             }
             if (existeLivroComTituloEIsbnExcluindoId(novoTitulo, novoIsbn, livro.getId())) {
                 throw new DuplicidadeException("O título ou ISBN '" + novoTitulo + "' / '" + novoIsbn + "' já pertence a outro livro.");
