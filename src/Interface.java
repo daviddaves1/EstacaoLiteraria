@@ -86,8 +86,8 @@ public class Interface {
                   "3. Excluir Livro\n" +
                   "4. Visualizar Livros\n" +
                   "5. Buscar Livro\n" +
-                  "6. Adicionar Estoque\n" + 
-                  "7. Remover Estoque\n" +   
+                  "6. Adicionar ao Estoque\n" + 
+                  "7. Remover do Estoque\n" +   
                   "0. Voltar ao Menu Principal\n\n" +
                   "Escolha uma opção:";
             String input = JOptionPane.showInputDialog(null, menu, "Gerenciar Livros", JOptionPane.PLAIN_MESSAGE);
@@ -322,8 +322,8 @@ public class Interface {
                         "3. Excluir Jornal\n" +
                         "4. Visualizar Jornais\n" +
                         "5. Buscar Jornal\n" +
-                        "6. Adicionar Estoque\n" + 
-                        "7. Remover Estoque\n" +   
+                        "6. Adicionar ao Estoque\n" + 
+                        "7. Remover do Estoque\n" +   
                         "0. Voltar ao Menu Principal\n\n" +
                         "Escolha uma opção:";
             String input = JOptionPane.showInputDialog(null, menu, "Gerenciar Jornais", JOptionPane.PLAIN_MESSAGE);

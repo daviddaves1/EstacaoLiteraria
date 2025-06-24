@@ -598,7 +598,7 @@ public class Sistema {
         }
 
         if (publicacao != null) {
-            publicacao.addEstoque(quantidade); // Chama o método da superclasse Publicacao
+            publicacao.addEstoque(quantidade);
             salvarTodosDados();
             return true;
         }
