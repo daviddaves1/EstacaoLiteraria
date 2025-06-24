@@ -38,18 +38,28 @@ public abstract class Publicacao implements Serializable {
     private Editora editora;
 
     /**
-     * Construtor para criar uma nova instância de Publicacao.
-     * O ID é automaticamente atribuído de forma sequencial.
+     * Construtor para criar uma nova Publicação.
+     * O ID é gerado automaticamente e sequencialmente.
      * @param titulo O título da publicação.
      * @param preco O preço de venda da publicação.
-     * @param estoqueDisponivel A quantidade inicial de exemplares em estoque.
      * @param editora A {@link Editora} associada a esta publicação.
      */
-    public Publicacao(String titulo, float preco, int estoqueDisponivel, Editora editora) {
+    public Publicacao(String titulo, float preco, Editora editora) { // ESTA LINHA É A CHAVE
+        // Validações que permanecerão no construtor de Publicacao
+        if (titulo == null || titulo.trim().isEmpty()) {
+            throw new IllegalArgumentException("Título da publicação não pode ser vazio.");
+        }
+        if (preco <= 0) {
+            throw new IllegalArgumentException("Preço da publicação deve ser maior que zero.");
+        }
+        if (editora == null) {
+            throw new IllegalArgumentException("Publicação deve ter uma editora associada.");
+        }
+
         this.id = proximoId++;
         this.titulo = titulo;
         this.preco = preco;
-        this.estoqueDisponivel = estoqueDisponivel;
+        this.estoqueDisponivel = 0; // Estoque inicial é sempre 0 agora
         this.editora = editora;
     }
 

@@ -19,14 +19,14 @@ public class Jornal extends Publicacao implements Serializable {
     /**
      * Construtor para criar uma nova instância de Jornal.
      * Os atributos comuns de publicação são passados para o construtor da superclasse.
+     * O estoque inicial do jornal é definido como 0 por padrão.
      * @param titulo O título do jornal.
      * @param preco O preço de venda do jornal.
-     * @param estoqueDisponivel A quantidade de exemplares disponíveis em estoque.
      * @param editora A {@link Editora} responsável pela publicação do jornal.
      * @param dataPublicacao A data específica de publicação do jornal.
      */
-    public Jornal(String titulo, float preco, int estoqueDisponivel, Editora editora, LocalDate dataPublicacao) {
-        super(titulo, preco, estoqueDisponivel, editora);
+    public Jornal(String titulo, float preco, Editora editora, LocalDate dataPublicacao) {
+        super(titulo, preco, editora);
         this.dataPublicacao = dataPublicacao;
     }
 

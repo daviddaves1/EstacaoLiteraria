@@ -81,25 +81,29 @@ public class Interface {
         int opcao;
         do {
             String menu = "Gerenciar Livros:\n\n" +
-                          "1. Cadastrar Livro\n" +
-                          "2. Editar Livro\n" +
-                          "3. Excluir Livro\n" +
-                          "4. Visualizar Livros\n" +
-                          "5. Buscar Livro\n" +
-                          "0. Voltar ao Menu Principal\n\n" +
-                          "Escolha uma opção:";
+                  "1. Cadastrar Livro\n" +
+                  "2. Editar Livro\n" +
+                  "3. Excluir Livro\n" +
+                  "4. Visualizar Livros\n" +
+                  "5. Buscar Livro\n" +
+                  "6. Adicionar Estoque\n" + 
+                  "7. Remover Estoque\n" +   
+                  "0. Voltar ao Menu Principal\n\n" +
+                  "Escolha uma opção:";
             String input = JOptionPane.showInputDialog(null, menu, "Gerenciar Livros", JOptionPane.PLAIN_MESSAGE);
             if (input == null) { opcao = 0; } else { try { opcao = Integer.parseInt(input); } catch (NumberFormatException e) { JOptionPane.showMessageDialog(null, "Entrada inválida. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE); opcao = -1; }}
 
             switch (opcao) {
-                case 1: cadastrarLivro(); break;
-                case 2: editarLivro(); break;
-                case 3: excluirLivro(); break;
-                case 4: visualizarLivros(); break;
-                case 5: buscarLivro(); break;
-                case 0: break; // Retorna ao menu principal.
-                default: JOptionPane.showMessageDialog(null, "Opção inválida.", "Erro", JOptionPane.ERROR_MESSAGE);
-            }
+            case 1: cadastrarLivro(); break;
+            case 2: editarLivro(); break;
+            case 3: excluirLivro(); break;
+            case 4: visualizarLivros(); break;
+            case 5: buscarLivro(); break;
+            case 6: adicionarEstoqueLivro(); break;
+            case 7: removerEstoqueLivro(); break;  
+            case 0: break; 
+            default: JOptionPane.showMessageDialog(null, "Opção inválida.", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
         } while (opcao != 0);
     }
 
@@ -113,18 +117,18 @@ public class Interface {
         if (titulo == null) return; // Usuário cancelou.
 
         float preco;
-        int estoque;
         int paginas;
+
         try {
             preco = Float.parseFloat(JOptionPane.showInputDialog("Preço do Livro:"));
-            estoque = Integer.parseInt(JOptionPane.showInputDialog("Estoque Inicial:"));
             paginas = Integer.parseInt(JOptionPane.showInputDialog("Quantidade de Páginas:"));
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Entrada inválida. Certifique-se de usar valores válidos para preço, estoque e páginas.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Entrada inválida. Certifique-se de usar valores válidos para preço e páginas.", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
         String isbn = JOptionPane.showInputDialog("ISBN:");
-        if (isbn == null) return; // Usuário cancelou.
+        if (isbn == null) return;
 
         Editora editoraSelecionada = selecionarEditora(); // Permite ao usuário selecionar uma editora existente.
         if (editoraSelecionada == null) {
@@ -145,7 +149,7 @@ public class Interface {
         }
 
         try {
-            if (sistema.cadastrarLivro(titulo, preco, estoque, editoraSelecionada, paginas, isbn, autoresSelecionados, categoriaSelecionada)) {
+            if (sistema.cadastrarLivro(titulo, preco, editoraSelecionada, paginas, isbn, autoresSelecionados, categoriaSelecionada)) {
                 JOptionPane.showMessageDialog(null, "Livro cadastrado com sucesso!");
             } else {
                 JOptionPane.showMessageDialog(null, "Falha ao cadastrar livro.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -174,17 +178,18 @@ public class Interface {
             // Solicita novos dados, exibindo os valores atuais como sugestão.
             String novoTitulo = JOptionPane.showInputDialog("Novo Título (" + livro.getTitulo() + "):", livro.getTitulo());
             if (novoTitulo == null) return;
+
             float novoPreco;
-            int novoEstoque;
             int novaPaginas;
+
             try {
                 novoPreco = Float.parseFloat(JOptionPane.showInputDialog("Novo Preço (" + livro.getPreco() + "):", String.valueOf(livro.getPreco())));
-                novoEstoque = Integer.parseInt(JOptionPane.showInputDialog("Novo Estoque (" + livro.getEstoqueDisponivel() + "):", String.valueOf(livro.getEstoqueDisponivel())));
                 novaPaginas = Integer.parseInt(JOptionPane.showInputDialog("Nova Quantidade de Páginas (" + livro.getQuantidadePaginas() + "):", String.valueOf(livro.getQuantidadePaginas())));
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Entrada inválida. Certifique-se de usar valores válidos para preço, estoque e páginas.", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Entrada inválida. Certifique-se de usar valores válidos para preço e páginas.", "Erro", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+
             String novoIsbn = JOptionPane.showInputDialog("Novo ISBN (" + livro.getIsbn() + "):", livro.getIsbn());
             if (novoIsbn == null) return;
 
@@ -207,7 +212,7 @@ public class Interface {
             }
 
             try {
-                if (sistema.editarLivro(id, novoTitulo, novoPreco, novoEstoque, novaEditora, novaPaginas, novoIsbn, novosAutores, novaCategoria)) {
+                if (sistema.editarLivro(id, novoTitulo, novoPreco, novaEditora, novaPaginas, novoIsbn, novosAutores, novaCategoria)) {
                     JOptionPane.showMessageDialog(null, "Livro editado com sucesso!");
                 } else {
                     JOptionPane.showMessageDialog(null, "Falha ao editar livro.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -312,24 +317,28 @@ public class Interface {
         int opcao;
         do {
             String menu = "Gerenciar Jornais:\n\n" +
-                          "1. Cadastrar Jornal\n" +
-                          "2. Editar Jornal\n" +
-                          "3. Excluir Jornal\n" +
-                          "4. Visualizar Jornais\n" +
-                          "5. Buscar Jornal\n" +
-                          "0. Voltar ao Menu Principal\n\n" +
-                          "Escolha uma opção:";
+                        "1. Cadastrar Jornal\n" +
+                        "2. Editar Jornal\n" +
+                        "3. Excluir Jornal\n" +
+                        "4. Visualizar Jornais\n" +
+                        "5. Buscar Jornal\n" +
+                        "6. Adicionar Estoque\n" + 
+                        "7. Remover Estoque\n" +   
+                        "0. Voltar ao Menu Principal\n\n" +
+                        "Escolha uma opção:";
             String input = JOptionPane.showInputDialog(null, menu, "Gerenciar Jornais", JOptionPane.PLAIN_MESSAGE);
             if (input == null) { opcao = 0; } else { try { opcao = Integer.parseInt(input); } catch (NumberFormatException e) { JOptionPane.showMessageDialog(null, "Entrada inválida.", "Erro", JOptionPane.ERROR_MESSAGE); opcao = -1; }}
 
             switch (opcao) {
-                case 1: cadastrarJornal(); break;
-                case 2: editarJornal(); break;
-                case 3: excluirJornal(); break;
-                case 4: visualizarJornais(); break;
-                case 5: buscarJornal(); break;
-                case 0: break;
-                default: JOptionPane.showMessageDialog(null, "Opção inválida.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    case 1: cadastrarJornal(); break;
+                    case 2: editarJornal(); break;
+                    case 3: excluirJornal(); break;
+                    case 4: visualizarJornais(); break;
+                    case 5: buscarJornal(); break;
+                    case 6: adicionarEstoqueJornal(); break; 
+                    case 7: removerEstoqueJornal(); break;   
+                    case 0: break;
+                    default: JOptionPane.showMessageDialog(null, "Opção inválida.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         } while (opcao != 0);
     }
@@ -342,15 +351,15 @@ public class Interface {
     private void cadastrarJornal() {
         String titulo = JOptionPane.showInputDialog("Título do Jornal:");
         if (titulo == null) return;
+
         float preco;
-        int estoque;
+
         try {
             preco = Float.parseFloat(JOptionPane.showInputDialog("Preço do Jornal:"));
-            estoque = Integer.parseInt(JOptionPane.showInputDialog("Estoque Inicial:"));
-            } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(null, "Entrada inválida. Certifique-se de usar valores válidos para preço e estoque.", "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Entrada inválida. Certifique-se de usar valores válidos para preço.", "Erro", JOptionPane.ERROR_MESSAGE); // TEXTO AJUSTADO
+            return;
+        }
 
         Editora editoraSelecionada = selecionarEditora();
         if (editoraSelecionada == null) {
@@ -369,7 +378,7 @@ public class Interface {
         }
 
         try {
-            if (sistema.cadastrarJornal(titulo, preco, estoque, editoraSelecionada, dataPublicacao)) {
+            if (sistema.cadastrarJornal(titulo, preco, editoraSelecionada, dataPublicacao)) {
                 JOptionPane.showMessageDialog(null, "Jornal cadastrado com sucesso!");
             } else {
                 JOptionPane.showMessageDialog(null, "Falha ao cadastrar jornal.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -387,6 +396,7 @@ public class Interface {
     private void editarJornal() {
         String idStr = JOptionPane.showInputDialog("Digite o ID do jornal a ser editado:");
         if (idStr == null) return;
+        
         try {
             int id = Integer.parseInt(idStr);
             Jornal jornal = sistema.buscarJornalPorId(id);
@@ -397,13 +407,13 @@ public class Interface {
 
             String novoTitulo = JOptionPane.showInputDialog("Novo Título (" + jornal.getTitulo() + "):", jornal.getTitulo());
             if (novoTitulo == null) return;
+
             float novoPreco;
-            int novoEstoque;
+
             try {
                 novoPreco = Float.parseFloat(JOptionPane.showInputDialog("Novo Preço (" + jornal.getPreco() + "):", String.valueOf(jornal.getPreco())));
-                novoEstoque = Integer.parseInt(JOptionPane.showInputDialog("Novo Estoque (" + jornal.getEstoqueDisponivel() + "):", String.valueOf(jornal.getEstoqueDisponivel())));
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Entrada numérica inválida para preço ou estoque.", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Entrada inválida. Certifique-se de usar valores válidos para preço.", "Erro", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -427,7 +437,7 @@ public class Interface {
             }
 
             try {
-                if (sistema.editarJornal(id, novoTitulo, novoPreco, novoEstoque, novaEditora, novaDataPublicacao)) {
+                if (sistema.editarJornal(id, novoTitulo, novoPreco, novaEditora, novaDataPublicacao)) {
                     JOptionPane.showMessageDialog(null, "Jornal editado com sucesso!");
                 } else {
                     JOptionPane.showMessageDialog(null, "Falha ao editar jornal.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -885,4 +895,169 @@ public class Interface {
 
         JOptionPane.showMessageDialog(null, sb.toString(), "Catálogo Completo", JOptionPane.PLAIN_MESSAGE);
     }
+
+        /**
+     * Solicita o ID de um livro e a quantidade a ser adicionada ao seu estoque.
+     * Realiza validações de entrada e chama o método correspondente no {@link Sistema}.
+     */
+    private void adicionarEstoqueLivro() {
+        String idStr = JOptionPane.showInputDialog("Digite o ID do livro para adicionar estoque:");
+        if (idStr == null) return;
+        try {
+            int id = Integer.parseInt(idStr);
+            Livro livro = sistema.buscarLivroPorId(id);
+            if (livro == null) {
+                JOptionPane.showMessageDialog(null, "Livro não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String qtdStr = JOptionPane.showInputDialog("Quantidade a adicionar ao estoque (atual: " + livro.getEstoqueDisponivel() + "):");
+            if (qtdStr == null) return;
+            int quantidade;
+            try {
+                quantidade = Integer.parseInt(qtdStr);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Quantidade inválida. Digite um número inteiro.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try {
+                // Chama o novo método no Sistema
+                if (sistema.adicionarEstoquePublicacao(livro.getId(), quantidade, "Livro")) {
+                    JOptionPane.showMessageDialog(null, quantidade + " unidades adicionadas ao estoque do livro '" + livro.getTitulo() + "'.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Falha ao adicionar estoque.", "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (DuplicidadeException e) { // Reutilizando para validação de quantidade
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Erro de Estoque", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "ID inválido. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Solicita o ID de um livro e a quantidade a ser removida de seu estoque.
+     * Realiza validações de entrada e chama o método correspondente no {@link Sistema}.
+     */
+    private void removerEstoqueLivro() {
+        String idStr = JOptionPane.showInputDialog("Digite o ID do livro para remover estoque:");
+        if (idStr == null) return;
+        try {
+            int id = Integer.parseInt(idStr);
+            Livro livro = sistema.buscarLivroPorId(id);
+            if (livro == null) {
+                JOptionPane.showMessageDialog(null, "Livro não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String qtdStr = JOptionPane.showInputDialog("Quantidade a remover do estoque (atual: " + livro.getEstoqueDisponivel() + "):");
+            if (qtdStr == null) return;
+            int quantidade;
+            try {
+                quantidade = Integer.parseInt(qtdStr);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Quantidade inválida. Digite um número inteiro.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try {
+                // Chama o novo método no Sistema
+                if (sistema.removerEstoquePublicacao(livro.getId(), quantidade, "Livro")) {
+                    JOptionPane.showMessageDialog(null, quantidade + " unidades removidas do estoque do livro '" + livro.getTitulo() + "'.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Falha ao remover estoque.", "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (DuplicidadeException e) { // Reutilizando para validação de quantidade/estoque insuficiente
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Erro de Estoque", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "ID inválido. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Solicita o ID de um jornal e a quantidade a ser adicionada ao seu estoque.
+     * Realiza validações de entrada e chama o método correspondente no {@link Sistema}.
+     */
+    private void adicionarEstoqueJornal() {
+        String idStr = JOptionPane.showInputDialog("Digite o ID do jornal para adicionar estoque:");
+        if (idStr == null) return;
+        try {
+            int id = Integer.parseInt(idStr);
+            Jornal jornal = sistema.buscarJornalPorId(id);
+            if (jornal == null) {
+                JOptionPane.showMessageDialog(null, "Jornal não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String qtdStr = JOptionPane.showInputDialog("Quantidade a adicionar ao estoque (atual: " + jornal.getEstoqueDisponivel() + "):");
+            if (qtdStr == null) return;
+            int quantidade;
+            try {
+                quantidade = Integer.parseInt(qtdStr);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Quantidade inválida. Digite um número inteiro.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try {
+                // Chama o novo método no Sistema
+                if (sistema.adicionarEstoquePublicacao(jornal.getId(), quantidade, "Jornal")) {
+                    JOptionPane.showMessageDialog(null, quantidade + " unidades adicionadas ao estoque do jornal '" + jornal.getTitulo() + "'.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Falha ao adicionar estoque.", "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (DuplicidadeException e) { // Reutilizando para validação de quantidade
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Erro de Estoque", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "ID inválido. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Solicita o ID de um jornal e a quantidade a ser removida de seu estoque.
+     * Realiza validações de entrada e chama o método correspondente no {@link Sistema}.
+     */
+    private void removerEstoqueJornal() {
+        String idStr = JOptionPane.showInputDialog("Digite o ID do jornal para remover estoque:");
+        if (idStr == null) return;
+        try {
+            int id = Integer.parseInt(idStr);
+            Jornal jornal = sistema.buscarJornalPorId(id);
+            if (jornal == null) {
+                JOptionPane.showMessageDialog(null, "Jornal não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String qtdStr = JOptionPane.showInputDialog("Quantidade a remover do estoque (atual: " + jornal.getEstoqueDisponivel() + "):");
+            if (qtdStr == null) return;
+            int quantidade;
+            try {
+                quantidade = Integer.parseInt(qtdStr);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Quantidade inválida. Digite um número inteiro.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try {
+                // Chama o novo método no Sistema
+                if (sistema.removerEstoquePublicacao(jornal.getId(), quantidade, "Jornal")) {
+                    JOptionPane.showMessageDialog(null, quantidade + " unidades removidas do estoque do jornal '" + jornal.getTitulo() + "'.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Falha ao remover estoque.", "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (DuplicidadeException e) { // Reutilizando para validação de quantidade/estoque insuficiente
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Erro de Estoque", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "ID inválido. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
 }

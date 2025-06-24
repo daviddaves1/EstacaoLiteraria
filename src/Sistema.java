@@ -184,7 +184,6 @@ public class Sistema {
      *
      * @param titulo O título do livro.
      * @param preco O preço do livro.
-     * @param estoque A quantidade inicial em estoque.
      * @param editora A {@link Editora} do livro.
      * @param paginas A quantidade de páginas do livro.
      * @param isbn O ISBN do livro.
@@ -193,12 +192,9 @@ public class Sistema {
      * @return {@code true} se o livro foi cadastrado com sucesso, {@code false} caso contrário.
      * @throws DuplicidadeException Se já existir um livro com o mesmo título ou ISBN.
      */
-    public boolean cadastrarLivro(String titulo, float preco, int estoque, Editora editora, int paginas, String isbn, List<Autor> autoresAssociar, Categoria categoriaAssociar) {
+    public boolean cadastrarLivro(String titulo, float preco, Editora editora, int paginas, String isbn, List<Autor> autoresAssociar, Categoria categoriaAssociar) {
         if (preco < 15.00) {
             throw new DuplicidadeException("Preço do livro deve ser no mínimo R$ 15,00.");
-        }
-        if (estoque < 0) {
-            throw new DuplicidadeException("Estoque do livro não pode ser negativo.");
         }
         if (paginas < 10) {
             throw new DuplicidadeException("Quantidade de páginas do livro deve ser no mínimo 10.");
@@ -215,7 +211,7 @@ public class Sistema {
         if (existeLivroComIsbn(isbn)) {
             throw new DuplicidadeException("Livro com o ISBN '" + isbn + "' já existe.");
         }
-        Livro novoLivro = new Livro(titulo, preco, estoque, editora, paginas, isbn);
+        Livro novoLivro = new Livro(titulo, preco, editora, paginas, isbn);
         if (autoresAssociar != null) {
             for (Autor autor : autoresAssociar) {
                 novoLivro.addAutor(autor);
@@ -234,31 +230,22 @@ public class Sistema {
      *
      * @param titulo O título do jornal.
      * @param preco O preço do jornal.
-     * @param estoque A quantidade inicial em estoque.
      * @param editora A {@link Editora} do jornal.
      * @param dataPublicacao A data de publicação do jornal.
      * @return {@code true} se o jornal foi cadastrado com sucesso, {@code false} caso contrário.
      * @throws DuplicidadeException Se já existir um jornal com o mesmo título e data de publicação.
      */
-    public boolean cadastrarJornal(String titulo, float preco, int estoque, Editora editora, LocalDate dataPublicacao) {
+    public boolean cadastrarJornal(String titulo, float preco, Editora editora, LocalDate dataPublicacao) {
         if (preco < 3.00) {
             throw new DuplicidadeException("Preço do jornal deve ser no mínimo R$ 3,00.");
-        }
-        if (estoque < 0) {
-            throw new DuplicidadeException("Estoque do jornal não pode ser negativo.");
-        }
-        if (preco <= 0) {
-            throw new DuplicidadeException("Preço do jornal deve ser maior que zero.");
-        }
-        if (estoque < 0) {
-            throw new DuplicidadeException("Estoque do jornal não pode ser negativo.");
         }
         if (existeJornalComTituloEData(titulo, dataPublicacao)) {
             throw new DuplicidadeException("Jornal com o título '" + titulo + "' e data '" + dataPublicacao + "' já existe.");
         }
-        Jornal novoJornal = new Jornal(titulo, preco, estoque, editora, dataPublicacao);
+
+        Jornal novoJornal = new Jornal(titulo, preco, editora, dataPublicacao);
         boolean adicionado = jornais.add(novoJornal);
-        if (adicionado) salvarTodosDados(); // Persiste os dados após o cadastro.
+        if (adicionado) salvarTodosDados();
         return adicionado;
     }
 
@@ -331,7 +318,6 @@ public class Sistema {
      * @param idLivro O ID do livro a ser editado.
      * @param novoTitulo O novo título do livro.
      * @param novoPreco O novo preço do livro.
-     * @param novoEstoque O novo estoque disponível do livro.
      * @param novaEditora A nova {@link Editora} do livro.
      * @param novaPaginas A nova quantidade de páginas do livro.
      * @param novoIsbn O novo ISBN do livro.
@@ -340,14 +326,11 @@ public class Sistema {
      * @return {@code true} se o livro foi editado com sucesso, {@code false} caso não seja encontrado ou falhe na edição.
      * @throws DuplicidadeException Se o novo título ou ISBN já pertencer a outro livro.
      */
-    public boolean editarLivro(int idLivro, String novoTitulo, float novoPreco, int novoEstoque, Editora novaEditora, int novaPaginas, String novoIsbn, List<Autor> novosAutores, Categoria novaCategoria) {
+    public boolean editarLivro(int idLivro, String novoTitulo, float novoPreco, Editora novaEditora, int novaPaginas, String novoIsbn, List<Autor> novosAutores, Categoria novaCategoria) {
         Livro livro = buscarLivroPorId(idLivro);
         if (livro != null) {
             if (novoPreco < 15.00) {
             throw new DuplicidadeException("Preço do livro deve ser no mínimo R$ 15,00.");
-            }
-            if (novoEstoque < 0) {
-                throw new DuplicidadeException("Estoque do livro não pode ser negativo.");
             }
             if (novaPaginas < 10) {
                 throw new DuplicidadeException("Quantidade de páginas do livro deve ser no mínimo 10.");
@@ -364,7 +347,6 @@ public class Sistema {
 
             livro.setTitulo(novoTitulo);
             livro.setPreco(novoPreco);
-            livro.setEstoqueDisponivel(novoEstoque);
             livro.setEditora(novaEditora);
             livro.setQuantidadePaginas(novaPaginas);
             livro.setIsbn(novoIsbn);
@@ -389,20 +371,16 @@ public class Sistema {
      * @param idJornal O ID do jornal a ser editado.
      * @param novoTitulo O novo título do jornal.
      * @param novoPreco O novo preço do jornal.
-     * @param novoEstoque O novo estoque disponível do jornal.
      * @param novaEditora A nova {@link Editora} do jornal.
      * @param novaDataPublicacao A nova data de publicação do jornal.
      * @return {@code true} se o jornal foi editado com sucesso, {@code false} caso não seja encontrado ou falhe na edição.
      * @throws DuplicidadeException Se o novo título e data de publicação já pertencerem a outro jornal.
      */
-    public boolean editarJornal(int idJornal, String novoTitulo, float novoPreco, int novoEstoque, Editora novaEditora, LocalDate novaDataPublicacao) {
+    public boolean editarJornal(int idJornal, String novoTitulo, float novoPreco, Editora novaEditora, LocalDate novaDataPublicacao) {
         Jornal jornal = buscarJornalPorId(idJornal);
             if (jornal != null) {
                 if (novoPreco < 3.00) {
                 throw new DuplicidadeException("Preço do jornal deve ser no mínimo R$ 3,00.");
-            }
-            if (novoEstoque < 0) {
-                throw new DuplicidadeException("Estoque do jornal não pode ser negativo.");
             }
             if (existeJornalComTituloEDataExcluindoId(novoTitulo, novaDataPublicacao, jornal.getId())) {
                 throw new DuplicidadeException("Jornal com o título '" + novoTitulo + "' e data '" + novaDataPublicacao + "' já existe.");
@@ -410,7 +388,6 @@ public class Sistema {
 
             jornal.setTitulo(novoTitulo);
             jornal.setPreco(novoPreco);
-            jornal.setEstoqueDisponivel(novoEstoque);
             jornal.setEditora(novaEditora);
             jornal.setDataPublicacao(novaDataPublicacao);
             salvarTodosDados(); // Persiste os dados após a edição.
@@ -599,4 +576,66 @@ public class Sistema {
                 .filter(j -> j.getDataPublicacao().equals(data))
                 .collect(Collectors.toList());
     }
+
+    /**
+ * Adiciona uma quantidade especificada ao estoque de uma publicação (Livro ou Jornal).
+ * @param idPublicacao O ID da publicação (Livro ou Jornal).
+ * @param quantidade A quantidade a ser adicionada.
+ * @param tipoPublicacao O tipo da publicação ("Livro" ou "Jornal").
+ * @return {@code true} se o estoque foi adicionado com sucesso, {@code false} caso a publicação não seja encontrada.
+ * @throws DuplicidadeException Se a quantidade for inválida.
+ */
+    public boolean adicionarEstoquePublicacao(int idPublicacao, int quantidade, String tipoPublicacao) {
+        if (quantidade <= 0) {
+            throw new DuplicidadeException("Quantidade a adicionar deve ser maior que zero.");
+        }
+
+        Publicacao publicacao = null;
+        if ("Livro".equalsIgnoreCase(tipoPublicacao)) {
+            publicacao = buscarLivroPorId(idPublicacao);
+        } else if ("Jornal".equalsIgnoreCase(tipoPublicacao)) {
+            publicacao = buscarJornalPorId(idPublicacao);
+        }
+
+        if (publicacao != null) {
+            publicacao.addEstoque(quantidade); // Chama o método da superclasse Publicacao
+            salvarTodosDados();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+ * Remove uma quantidade especificada do estoque de uma publicação (Livro ou Jornal).
+ * @param idPublicacao O ID da publicação (Livro ou Jornal).
+ * @param quantidade A quantidade a ser removida.
+ * @param tipoPublicacao O tipo da publicação ("Livro" ou "Jornal").
+ * @return {@code true} se o estoque foi removido com sucesso, {@code false} caso a publicação não seja encontrada.
+ * @throws DuplicidadeException Se a quantidade for inválida ou o estoque for insuficiente.
+ */
+    public boolean removerEstoquePublicacao(int idPublicacao, int quantidade, String tipoPublicacao) {
+        if (quantidade <= 0) {
+            throw new DuplicidadeException("Quantidade a remover deve ser maior que zero.");
+        }
+
+        Publicacao publicacao = null;
+        if ("Livro".equalsIgnoreCase(tipoPublicacao)) {
+            publicacao = buscarLivroPorId(idPublicacao);
+        } else if ("Jornal".equalsIgnoreCase(tipoPublicacao)) {
+            publicacao = buscarJornalPorId(idPublicacao);
+        }
+
+        if (publicacao != null) {
+            if (publicacao.getEstoqueDisponivel() < quantidade) {
+                throw new DuplicidadeException("Estoque insuficiente para remover " + quantidade + " unidades. Estoque atual: " + publicacao.getEstoqueDisponivel());
+            }
+            publicacao.remEstoque(quantidade); // Chama o método da superclasse Publicacao
+            salvarTodosDados();
+            return true;
+        }
+        return false;
+    }
+
+
+
 }

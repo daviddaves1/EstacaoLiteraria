@@ -30,18 +30,18 @@ public class Livro extends Publicacao implements Serializable {
      */
     private Categoria categoria;
 
-    /**
+/**
      * Construtor para criar uma nova instância de Livro.
      * Os atributos comuns de publicação são passados para o construtor da superclasse.
+     * O estoque inicial do livro é definido como 0 por padrão.
      * @param titulo O título do livro.
      * @param preco O preço de venda do livro.
-     * @param estoqueDisponivel A quantidade inicial de exemplares em estoque.
      * @param editora A {@link Editora} responsável pela publicação do livro.
      * @param quantidadePaginas A quantidade de páginas do livro.
      * @param isbn O ISBN do livro.
      */
-    public Livro(String titulo, float preco, int estoqueDisponivel, Editora editora, int quantidadePaginas, String isbn) {
-        super(titulo, preco, estoqueDisponivel, editora);
+    public Livro(String titulo, float preco, Editora editora, int quantidadePaginas, String isbn) {
+        super(titulo, preco, editora);
         this.quantidadePaginas = quantidadePaginas;
         this.isbn = isbn;
         this.autores = new ArrayList<>();
